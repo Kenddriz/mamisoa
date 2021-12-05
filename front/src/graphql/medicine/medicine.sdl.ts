@@ -2,6 +2,7 @@ import { PACKAGING_PARAMS } from '../packaging/packaging.sdl';
 import { Medicine, MedicinePaginationOutput, MostConsumedMedicineOutput } from '../types';
 import { gql } from '@apollo/client/core';
 import { PAGINATION_META } from '../utils/pagination';
+import {BATCH_FIELDS} from 'src/graphql/batch/batch.sdl';
 
 export const MEDICINE_FIELDS = `
   id
@@ -74,6 +75,7 @@ export const RESTORE_MEDICINE = gql`
   mutation RestoreMedicine($id: Int!) {
     restoreMedicine(id: $id) {
       ${MEDICINE_FIELDS}
+      batches{${BATCH_FIELDS}}
     }
   }
 `;

@@ -93,6 +93,9 @@ export const useSoftRemoveMedicine = () => {
                 fields: {
                   paginateDeletedMedicines(existing: any, {toReference}) {
                     return addPaginationCache(data.softRemoveMedicine, existing, toReference);
+                  },
+                  paginateMedicines(existingRef: any, { readField, toReference }) {
+                    return deletePaginationCache(id, existingRef, readField, toReference);
                   }
                 }
               })
@@ -150,7 +153,10 @@ export const useRestoreMedicine = () => {
             fields: {
               paginateDeletedMedicines(existing: any, {readField,toReference}) {
                 return deletePaginationCache(id, existing, readField, toReference);
-              }
+              },
+              paginateMedicines(existing: any, {toReference}) {
+                return addPaginationCache(data.restoreMedicine, existing, toReference);
+              },
             }
           })
         }

@@ -90,6 +90,7 @@
             color="deep-orange"
             icon="delete"
             class="q-pr-sm"
+            @click="softRemoveMedicine(props.row)"
           />
         </q-td>
       </q-tr>
@@ -135,6 +136,10 @@ export default defineComponent({
       }),
       updateMedicine: (medicine: Medicine) => dialog({
         component: defineAsyncComponent(() => import('components/medicine/UpdateMedicine.vue')),
+        componentProps: { medicine }
+      }),
+      softRemoveMedicine: (medicine: Medicine) => dialog({
+        component: defineAsyncComponent(() => import('components/medicine/SoftRemoveMedicine.vue')),
         componentProps: { medicine }
       }),
       ...usePaginateMedicines()
