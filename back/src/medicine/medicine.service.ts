@@ -19,12 +19,6 @@ export class MedicineService {
   async findByIds(ids: number[]): Promise<Medicine[]> {
     return this.repository.findByIds(ids);
   }
-  async findOneByArticle(articleId: number): Promise<Medicine[]> {
-    return this.repository
-      .createQueryBuilder('m')
-      .where('m.articleId = :articleId', { articleId })
-      .getMany();
-  }
   async count(): Promise<number> {
     return this.repository.count();
   }
@@ -51,5 +45,12 @@ export class MedicineService {
   async remove(id: number): Promise<boolean> {
     const query = await this.repository.delete(id);
     return query.affected > 0;
+  }
+  async paginate(input: PaginationInput): Promise<Pagination<Medicine>> {
+    const query = this.repository
+      .createQueryBuilder('med')
+      .where('med.label ILIKE :label', { label: `%${input.keyword}%` })
+      .orderBy('med.label', 'ASC');
+    return paginate(query, { ...input });
   }
 }

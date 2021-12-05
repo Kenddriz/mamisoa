@@ -2,7 +2,7 @@
   <q-dialog ref="dialogRef">
     <MovableCard resizable>
       <template v-slot:title>
-        Mise à jour de la ligne de commande
+        Mise à jour
       </template>
       <CommandLineForm
         class="q-pa-lg"

@@ -29,34 +29,6 @@ type Contact {
   list: [String!]!
 }
 
-type Article {
-  id: Float!
-  dci: String!
-  commercialName: String!
-  medicines: [Medicine!]!
-  updatedAt: DateTime!
-  createdAt: DateTime!
-  archivedAt: DateTime
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type Form {
-  id: Float!
-  label: String!
-  archivedAt: DateTime
-}
-
-type Dosage {
-  id: Float!
-  parentId: Float!
-  label: String!
-  archivedAt: DateTime
-}
-
 type Unit {
   label: String!
   multiplicity: Float!
@@ -67,6 +39,11 @@ type Packaging {
   units: [Unit!]!
   archivedAt: DateTime
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Patient {
   id: Float!
@@ -149,9 +126,7 @@ type Batch {
 
 type Medicine {
   id: Float!
-  article: Article!
-  form: Form!
-  dosage: Dosage!
+  label: String!
   packaging: Packaging!
   batches: [Batch!]!
   commandLines: [CommandLine!]
@@ -218,16 +193,6 @@ type MedicinePaginationOutput {
 type MostConsumedMedicineOutput {
   medicine: Medicine!
   count: Int!
-}
-
-type SoftRemoveMedicineOutput {
-  medicine: Medicine!
-  article: Article!
-}
-
-type ArticlePagination {
-  items: [Article!]!
-  meta: Meta!
 }
 
 type StockMovementPagination {
@@ -297,16 +262,9 @@ type Query {
   countMedicines: Int!
   mostConsumedMedicines(year: Int!): [MostConsumedMedicineOutput!]!
   paginateDeletedMedicines(input: PaginationInput!): MedicinePaginationOutput!
-  forms: [Form!]!
-  countForms: Int!
-  dosages: [Dosage!]!
-  countDosages: Int!
+  paginateMedicines(input: PaginationInput!): MedicinePaginationOutput!
   packaging: [Packaging!]!
   deletedPackaging: [Packaging!]!
-  paginateArticles(input: PaginateArticleInput!): ArticlePagination!
-  findOneArticle(keyword: String!): Article
-  countArticles: Int!
-  paginateDeletedArticles(input: PaginationInput!): ArticlePagination!
   paginateStockMovement(input: PaginateStockMovementInput!): StockMovementPagination!
   paginateInvoices(input: PaginateInvoiceInput!): InvoicePagination!
   countUnpaidInvoices: Int!
@@ -340,18 +298,6 @@ input PaginateProviderCommandsInput {
   page: Float!
   limit: Float!
   providerInput: ProviderCommandsInput
-}
-
-input PaginateArticleInput {
-  keyword: String
-  page: Float!
-  limit: Float!
-  measureInput: FindByMeasureInput
-}
-
-input FindByMeasureInput {
-  id: Int!
-  foreignKey: String!
 }
 
 input PaginateStockMovementInput {
@@ -398,25 +344,16 @@ type Mutation {
   addCommandLine(input: AddCommandLineInput!): Command!
   updateCommandLine(input: UpdateCommandLineInput!): CommandLine!
   removeCommandLine(id: String!): Command!
-  createMedicine(input: CreateMedicineInput!): Article!
+  createMedicine(input: CreateMedicineInput!): Medicine!
   updateMedicine(input: UpdateMedicineInput!): Medicine!
-  softRemoveMedicine(id: Int!): SoftRemoveMedicineOutput!
+  softRemoveMedicine(id: Int!): Medicine!
   removeMedicine(id: Int!): Boolean!
-  restoreMedicine(id: Int!): Article
-  createForm(input: CreateFormInput!): Form
-  updateForm(input: UpdateFormInput!): Form
-  deleteForm(id: Int!): Boolean!
-  saveDosage(input: SaveDosageInput!): Dosage!
-  deleteDosage(id: Int!): Boolean!
+  restoreMedicine(id: Int!): Medicine
   createPackaging(input: [CreatePackagingInput!]!): Packaging!
   updatePackaging(input: UpdatePackagingInput!): Packaging!
   softRemovePackaging(id: Int!): Packaging!
   removePackaging(id: Int!): Boolean!
   restorePackaging(id: Int!): Packaging!
-  saveArticle(input: SaveArticleInput!): Article!
-  softRemoveArticle(id: Int!): Article!
-  removeArticle(id: Int!): Boolean!
-  restoreArticle(id: Int!): Article
   updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
   updateSaleLine(input: UpdateSaleLineInput!): StockMovement!
   cancelSaleLines(input: CancelSaleLinesInput!): CancelSaleLineOutput!
@@ -503,13 +440,7 @@ input UpdateCommandLineInput {
 }
 
 input CreateMedicineInput {
-  articleId: Int!
-  form: MedicineFormInput!
-}
-
-input MedicineFormInput {
-  formId: Int!
-  dosageId: Int!
+  label: String!
   packagingId: Int!
   currentSalePrice: Float!
   currentVat: Float!
@@ -517,22 +448,7 @@ input MedicineFormInput {
 
 input UpdateMedicineInput {
   id: Int!
-  form: MedicineFormInput!
-}
-
-input CreateFormInput {
-  label: String!
-}
-
-input UpdateFormInput {
-  label: String!
-  id: Int!
-}
-
-input SaveDosageInput {
-  id: Float!
-  parentId: Float!
-  label: String!
+  form: CreateMedicineInput!
 }
 
 input CreatePackagingInput {
@@ -543,12 +459,6 @@ input CreatePackagingInput {
 input UpdatePackagingInput {
   id: Int!
   units: [CreatePackagingInput!]!
-}
-
-input SaveArticleInput {
-  id: Int = 0
-  dci: String!
-  commercialName: String!
 }
 
 input UpdateAssuredLineInput {

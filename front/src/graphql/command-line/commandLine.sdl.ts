@@ -1,13 +1,12 @@
-import { MEDICINE_PARAMS } from '../medicine/medicine.sdl';
 import { Command, CommandLine } from '../types';
 import { gql } from '@apollo/client/core';
+import {MEDICINE_FIELDS} from 'src/graphql/medicine/medicine.sdl';
 
 export const COMMAND_LINE = `
    id
    quantity
    medicine {
-    ${MEDICINE_PARAMS}
-    article {id commercialName}
+    ${MEDICINE_FIELDS}
    }
 `;
 export type AddCommandLineData = {

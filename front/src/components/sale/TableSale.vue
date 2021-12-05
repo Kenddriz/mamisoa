@@ -143,11 +143,10 @@
           <q-input
             outlined
             label="Entrer le nom de l'article"
-            :model-value="keyword"
-            v-model="keyword"
+            :model-value="input.keyword"
+            v-model="input.keyword"
             dense
             hide-bottom-space
-            @update:model-value="findArticle"
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -159,15 +158,15 @@
         </q-card-section>
         <ScrollArea style="height: calc(86vh - 100px)" class="q-pa-sm">
           <ArticleMedicinesBatches
-            v-if="article"
-            :article="article"
+            v-if="medicines"
+            :medicines="medicines"
             @add-shop="addShop"
             @individual-sale="handleIndividualSale"
           />
           <NoData
             :sizes="[100, 150]"
-            :loading="faLoading"
-            :total-items="article?.medicines?.length||0"
+            :loading="pcLoading"
+            :total-items="medicines?.items.length||0"
           />
         </ScrollArea>
       </q-card>
@@ -181,13 +180,13 @@ import DiscountCalculator from './create/DiscountCalculator.vue';
 import CommonSaleHeader from './CommonSaleHeader.vue';
 import SubdivideList from '../packaging/SubdivideList.vue';
 import SaleLine from './create/SaleLine.vue';
-import { Batch, SaleLineInput } from '../../graphql/types';
+import { Batch, SaleLineInput } from 'src/graphql/types';
 import { useQuasar } from 'quasar';
-import { getMedicineName, movable, saleLineCost } from '../../graphql/utils/utils';
-import ArticleMedicinesBatches from './create/ArticleMedicinesBatches.vue';
+import { getMedicineName, movable, saleLineCost } from 'src/graphql/utils/utils';
+import ArticleMedicinesBatches from './create/MedicinesBatches.vue';
 import ScrollArea from '../shared/ScrollArea.vue';
 import NoData from '../shared/NoData.vue';
-import { useFindOneArticle } from '../../graphql/article/article.service';
+import {usePaginateMedicines} from 'src/graphql/medicine/paginate.medicines';
 
 export default defineComponent({
   name: 'TableSale',
@@ -292,7 +291,7 @@ export default defineComponent({
         if(ev.isFirst !== true && !ev.isFinal && searchTool.value)
           searchTool.value = false;
       }),
-      ...useFindOneArticle()
+      ...usePaginateMedicines(10)
     }
   }
 });

@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: 'unit', component: () => import('pages/Units.vue') },
       { path: 'provider', component: () => import('pages/provider/Provider.vue') },
-      { path: 'medicine', component: () => import('pages/medicine/MedicinePage.vue') },
+      { path: 'medicine', component: () => import('pages/medicine/Medicine.vue') },
       { path: 'command', component: () => import('pages/command/Command.vue') },
       { path: 'invoice', component: () => import('pages/invoice/Invoice.vue') },
       { path: '', alias: 'sale', component: () => import('pages/sale/Sale.vue') }

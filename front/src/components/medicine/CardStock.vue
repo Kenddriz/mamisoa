@@ -24,13 +24,12 @@
               </th>
             </tr>
             <tr>
-              <th colspan="3">
-                Article : <span class="text-capitalize">{{medicine.article.commercialName}}</span>
+              <th colspan="6">
+               <span class="text-capitalize">{{medicine.label}}</span>
                 <template v-if="batch">
                   - Lot N°{{batch.id}}, Exp.{{formatDate(batch.expirationDate, 'DATE_ONLY')}}
                 </template>
               </th>
-              <th colspan="3">Dosage/Forme : {{medicine.dosage.label}}, {{medicine.form.label}}</th>
             </tr>
             <tr>
               <th colspan="3">Code: M{{medicine.id}}</th>

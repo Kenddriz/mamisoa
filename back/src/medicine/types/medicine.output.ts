@@ -1,7 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Medicine } from '../medicine.entity';
 import { Meta } from '../../shared/shared.dto';
-import { Article } from '../../article/article.entity';
 
 @ObjectType()
 export class MedicinePaginationOutput {
@@ -17,11 +16,4 @@ export class MostConsumedMedicineOutput {
   medicine: Medicine;
   @Field(() => Int)
   count: number;
-}
-@ObjectType()
-export class SoftRemoveMedicineOutput {
-  @Field(() => Medicine)
-  medicine: Medicine;
-  @Field(() => Article)
-  article: Article;
 }

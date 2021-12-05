@@ -1,34 +1,24 @@
 <template>
   <q-dialog ref="dialogRef">
-    <q-card>
-      <q-card-section class="q-pa-none">
+    <MovableCard>
+      <template v-slot:title>
+        Mise à jour
+      </template>
         <MedicineForm
-          :forms="forms"
-          :selectedForm="selectedForm"
-          :dosages="dosages"
-          :selectedDosage="selectedDosage"
-          :packaging="packagingList"
-          :selectedPk="selectedPk"
-          :price="medicine.currentSalePrice"
-          :vat="medicine.currentVat"
+          :item="medicine"
           @submit="updateMedicine(medicine.id, $event)"
-        >
-          Mise à jour
-        </MedicineForm>
-      </q-card-section>
-    </q-card>
+        />
+    </MovableCard>
   </q-dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import MedicineForm from './MedicineForm.vue';
-import { useUpdateMedicine } from '../../graphql/medicine/medicine.service';
-import { Medicine } from '../../graphql/types';
-import { useForms } from '../../graphql/form/form.service';
-import { useDosages } from '../../graphql/dosage/dosage.service';
-import { useListPackaging } from '../../graphql/packaging/packaging.service';
+import { useUpdateMedicine } from 'src/graphql/medicine/medicine.service';
+import { Medicine } from 'src/graphql/types';
 import { useDialogPluginComponent } from 'quasar';
+import MovableCard from 'components/shared/MovableCard.vue';
 
 export default defineComponent({
   name: 'UpdateMedicine',
@@ -38,24 +28,14 @@ export default defineComponent({
       required: true
     }
   },
-  components: { MedicineForm },
+  components: { MedicineForm, MovableCard },
   setup() {
     const { dialogRef } = useDialogPluginComponent();
     return {
       dialogRef,
       ...useUpdateMedicine(),
-      ...useForms(),
-      ...useDosages(),
-      ...useListPackaging()
     }
   },
-  mounted() {
-    setTimeout(() => {
-      Object.assign(this.selectedForm, this.medicine.form);
-      Object.assign(this.selectedPk, this.medicine.packaging);
-      Object.assign(this.selectedDosage, this.medicine.dosage);
-    }, 0);
-  }
 });
 </script>
 

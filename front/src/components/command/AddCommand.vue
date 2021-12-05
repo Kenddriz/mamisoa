@@ -69,7 +69,10 @@
       </tr>
       <tr class="q-tr--no-hover" v-for="(ipt, index) in commandLineInput" :key="index">
         <td>
-          <ArticleSelect @update="setLine($event, index)" />
+          <MedicineSelect
+            @update="setLine($event, index)"
+            borderless
+          />
         </td>
         <td>
           <PackagingInput
@@ -93,20 +96,19 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
-import ArticleSelect from '../article/ArticleSelect.vue';
-import { CommandLineInput, Packaging, Provider } from '../../graphql/types';
-import { FindOneArticleOption } from '../../graphql/article/article.service';
+import { CommandLineInput, Packaging, Provider } from 'src/graphql/types';
 import PackagingInput from '../packaging/PackagingInput.vue';
-import { useCreateCommand } from '../../graphql/command/command.service';
-import { getOneContact } from '../../graphql/utils/utils';
+import { useCreateCommand } from 'src/graphql/command/command.service';
+import { getOneContact } from 'src/graphql/utils/utils';
 import { cmData } from '../command-line/cmData';
 import UpdateProviderAvatar from '../provider/UpdateProviderAvatar.vue';
 import { useQuasar } from 'quasar';
 import UpdateProvider from '../provider/UpdateProvider.vue';
+import MedicineSelect from 'components/medicine/MedicineSelect.vue';
 
 export default defineComponent({
   name: 'AddCommand',
-  components: { ArticleSelect, PackagingInput, UpdateProviderAvatar },
+  components: { PackagingInput, UpdateProviderAvatar, MedicineSelect },
   props: {
     provider: {
       type: Object as PropType<Provider>,
@@ -125,7 +127,7 @@ export default defineComponent({
     function removeLine(index: number) {
       commandLineInput.value.splice(index, 1);
     }
-    function setLine(data: FindOneArticleOption, index: number) {
+    function setLine(data: any, index: number) {
       commandLineInput.value[index].pkg = data.packaging;
       commandLineInput.value[index].medicineId = data.value;
     }

@@ -1,34 +1,26 @@
 import {
-  Resolver,
-  Query,
-  Mutation,
   Args,
-  ResolveField,
-  Root,
   Int,
+  Mutation,
+  Query,
+  ResolveField,
+  Resolver,
+  Root,
 } from '@nestjs/graphql';
 import { MedicineService } from './medicine.service';
 import { Medicine } from './medicine.entity';
 import {
   CreateMedicineInput,
   UpdateMedicineInput,
-  MedicineFormInput,
 } from './types/medicine.input';
 import { uniqId } from '../utils';
-import { Form } from '../form/form.entity';
-import { FormService } from '../form/form.service';
-import { DosageService } from '../dosage/dosage.service';
 import { PackagingService } from '../packaging/packaging.service';
 import { Packaging } from '../packaging/packaging.entity';
-import { Dosage } from '../dosage/dosage.entity';
-import { ArticleService } from '../article/article.service';
-import { Article } from '../article/article.entity';
 import { BatchService } from '../batch/batch.service';
 import { Batch } from '../batch/batch.entity';
 import {
   MedicinePaginationOutput,
   MostConsumedMedicineOutput,
-  SoftRemoveMedicineOutput,
 } from './types/medicine.output';
 import { PaginationInput } from '../shared/shared.input';
 
@@ -36,23 +28,17 @@ import { PaginationInput } from '../shared/shared.input';
 export class MedicineResolver {
   constructor(
     private medicineService: MedicineService,
-    private formService: FormService,
-    private dosageService: DosageService,
     private packagingService: PackagingService,
-    private articleService: ArticleService,
     private batchService: BatchService,
   ) {}
 
-  @Mutation(() => Article)
+  @Mutation(() => Medicine)
   async createMedicine(
     @Args('input') input: CreateMedicineInput,
-  ): Promise<Article> {
+  ): Promise<Medicine> {
     const medicine = new Medicine();
     medicine.id = await uniqId('Medicine');
-    const { articleId, form } = input;
-    medicine.article = await this.articleService.findOneById(articleId);
-    await this.save(medicine, form);
-    return medicine.article;
+    return this.save(medicine, input);
   }
   @Mutation(() => Medicine)
   async updateMedicine(
@@ -60,25 +46,12 @@ export class MedicineResolver {
   ): Promise<Medicine> {
     const { id, form } = input;
     const medicine = await this.medicineService.findOne(id);
-    await this.save(medicine, form);
-    return medicine;
+    return this.save(medicine, form);
   }
   /**Field resolvers*/
-  @ResolveField(() => Form)
-  async form(@Root() medicine: Medicine): Promise<Form> {
-    return this.formService.findOne(medicine.formId);
-  }
-  @ResolveField(() => Dosage)
-  async dosage(@Root() medicine: Medicine): Promise<Dosage> {
-    return this.dosageService.findOneById(medicine.dosageId);
-  }
   @ResolveField(() => Packaging)
   async packaging(@Root() medicine: Medicine): Promise<Packaging> {
     return this.packagingService.findOneById(medicine.packagingId);
-  }
-  @ResolveField(() => Article)
-  async article(@Root() medicine: Medicine): Promise<Article> {
-    return this.articleService.findOneById(medicine.articleId);
   }
   @ResolveField(() => [Batch])
   async batches(@Root() medicine: Medicine): Promise<Batch[]> {
@@ -86,14 +59,13 @@ export class MedicineResolver {
   }
   private async save(
     medicine: Medicine,
-    form: MedicineFormInput,
-  ): Promise<void> {
-    medicine.form = await this.formService.findOne(form.formId);
-    medicine.dosage = await this.dosageService.findOneById(form.dosageId);
-    medicine.packaging = await this.packagingService.findOneById(form.packagingId);
-    medicine.currentSalePrice = form.currentSalePrice;
-    medicine.currentVat = form.currentVat;
-    await this.medicineService.save(medicine);
+    form: CreateMedicineInput,
+  ): Promise<Medicine> {
+    medicine.packaging = await this.packagingService.findOneById(
+      form.packagingId,
+    );
+    Object.assign(medicine, form);
+    return this.medicineService.save(medicine);
   }
   @Query(() => Int)
   async countMedicines() {
@@ -121,28 +93,26 @@ export class MedicineResolver {
   async paginateDeletedMedicines(@Args('input') input: PaginationInput) {
     return this.medicineService.paginateDeleted(input);
   }
-  @Mutation(() => SoftRemoveMedicineOutput)
+  @Query(() => MedicinePaginationOutput)
+  async paginateMedicines(@Args('input') input: PaginationInput): Promise<MedicinePaginationOutput> {
+    return this.medicineService.paginate(input);
+  }
+  @Mutation(() => Medicine)
   async softRemoveMedicine(
     @Args({ name: 'id', type: () => Int }) id: number,
-  ): Promise<SoftRemoveMedicineOutput> {
+  ): Promise<Medicine> {
     const med = await this.medicineService.findOneWithChildren(id);
-    const medicine = await this.medicineService.softRemove(med);
-    return {
-      article: await this.articleService.findOneById(med.articleId),
-      medicine,
-    };
+    return this.medicineService.softRemove(med);
   }
   @Mutation(() => Boolean)
   async removeMedicine(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.medicineService.remove(id);
   }
-  @Mutation(() => Article, { nullable: true })
+  @Mutation(() => Medicine, { nullable: true })
   async restoreMedicine(
     @Args({ name: 'id', type: () => Int }) id: number,
-  ): Promise<Article> {
-    const rem = await this.medicineService.restore(id);
-    if (!rem) return null;
-    const { articleId } = await this.medicineService.findOne(id);
-    return this.articleService.findOneById(articleId);
+  ): Promise<Medicine> {
+    await this.medicineService.restore(id);
+    return this.medicineService.findOne(id);
   }
 }

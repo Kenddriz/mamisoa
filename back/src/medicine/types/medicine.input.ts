@@ -1,12 +1,9 @@
 import { InputType, Field, Int, Float } from '@nestjs/graphql';
 
 @InputType()
-export class MedicineFormInput {
-  @Field(() => Int)
-  formId: number;
-
-  @Field(() => Int)
-  dosageId: number;
+export class CreateMedicineInput {
+  @Field(() => String)
+  label: string;
 
   @Field(() => Int)
   packagingId: number;
@@ -17,17 +14,11 @@ export class MedicineFormInput {
   @Field(() => Float)
   currentVat: number;
 }
-@InputType()
-export class CreateMedicineInput {
-  @Field(() => Int)
-  articleId: number;
-  @Field(() => MedicineFormInput)
-  form: MedicineFormInput;
-}
+
 @InputType()
 export class UpdateMedicineInput {
   @Field(() => Int)
   id: number;
-  @Field(() => MedicineFormInput)
-  form: MedicineFormInput;
+  @Field(() => CreateMedicineInput)
+  form: CreateMedicineInput;
 }

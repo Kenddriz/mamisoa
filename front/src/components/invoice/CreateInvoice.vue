@@ -171,6 +171,7 @@
           </q-table>
           <q-card-actions align="around">
             <q-btn
+              v-close-popup
               unelevated
               color="teal-14"
               no-caps

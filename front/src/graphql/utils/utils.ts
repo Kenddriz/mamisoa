@@ -1,11 +1,16 @@
 import { Dialog } from 'quasar';
-import { i18n } from '../../boot/i18n';
+import { i18n } from 'boot/i18n';
 import { Command, Contact, Medicine, SaleLineInput, StockMovement, Unit } from '../types';
 import moment from 'moment';
 import { jsPDF }  from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { computed, ref } from 'vue';
-import { roundNumber } from '../../components/dashboard/income/logical';
+import { roundNumber } from 'components/dashboard/income/logical';
+
+export type Option = {
+  label: string;
+  value: number
+}
 
 export const cloneDeep = (data: any) => {
   return JSON.parse(JSON.stringify(data))
@@ -46,7 +51,7 @@ export const validateDate = (val: string):boolean => {
   return val.split('/').length === 3;
 }
 export const getMedicineName = (med: Medicine): string => {
-  return `${med.article.commercialName} ${med.dosage.label}, ${med.form.label}`;
+  return `${med.label}`;
 }
 export const getOneContact = (contacts: Contact[], each = false) => {
   const list: string[] = [];

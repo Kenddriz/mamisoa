@@ -10,9 +10,6 @@ import {
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
-import { Article } from '../article/article.entity';
-import { Form } from '../form/form.entity';
-import { Dosage } from '../dosage/dosage.entity';
 import { Packaging } from '../packaging/packaging.entity';
 import { Batch } from '../batch/batch.entity';
 import { CommandLine } from '../command-line/command-line.entity';
@@ -24,32 +21,9 @@ export class Medicine {
   @PrimaryColumn()
   id: number;
 
-  @Field(() => Article)
-  @ManyToOne(() => Article, (article) => article.medicines, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  article: Article;
-  @RelationId((medicine: Medicine) => medicine.article)
-  articleId: number;
-
-  @Field(() => Form)
-  @ManyToOne(() => Form, (form) => form.medicines, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  form: Form;
-  @RelationId((medicine: Medicine) => medicine.form)
-  formId: number;
-
-  @Field(() => Dosage)
-  @ManyToOne(() => Dosage, (dosage) => dosage.medicines, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  dosage: Dosage;
-  @RelationId((medicine: Medicine) => medicine.dosage)
-  dosageId: number;
+  @Field()
+  @Column({ type: 'varchar', unique: true })
+  label: string;
 
   @Field(() => Packaging)
   @ManyToOne(() => Packaging, (packaging) => packaging.medicines, {

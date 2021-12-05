@@ -1,51 +1,33 @@
 <template>
-  <q-btn
-    class="q-ml-lg"
-    round
-    color="positive"
-    size="xs"
-    icon="add"
-  >
-    <q-menu>
-      <MedicineForm
-        :forms="forms"
-        :selectedForm="selectedForm"
-        :dosages="dosages"
-        :selectedDosage="selectedDosage"
-        :packaging="packagingList"
-        :selectedPk="selectedPk"
-        @submit="createMedicine(articleId, $event)"
-      >
+  <q-dialog ref="dialogRef">
+    <MovableCard>
+      <template v-slot:title>
         Nouveau médicament
-      </MedicineForm>
-    </q-menu>
-  </q-btn>
+      </template>
+      <MedicineForm
+        @submit="createMedicine"
+      />
+    </MovableCard>
+  </q-dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useForms } from '../../graphql/form/form.service';
-import { useDosages } from '../../graphql/dosage/dosage.service';
-import { useListPackaging } from '../../graphql/packaging/packaging.service';
-import { useCreateMedicine } from '../../graphql/medicine/medicine.service';
 import MedicineForm from './MedicineForm.vue';
+import MovableCard from 'components/shared/MovableCard.vue';
+import {useDialogPluginComponent} from 'quasar';
+import {useCreateMedicine} from 'src/graphql/medicine/create.medicine';
 
 export default defineComponent({
   name: 'AddMedicine',
   components: {
-    MedicineForm
-  },
-  props: {
-    articleId: {
-      type: Number,
-      required: true
-    }
+    MedicineForm,
+    MovableCard
   },
   setup() {
+    const { dialogRef } = useDialogPluginComponent()
     return {
-      ...useForms(),
-      ...useDosages(),
-      ...useListPackaging(),
+      dialogRef,
       ...useCreateMedicine(),
     }
   }

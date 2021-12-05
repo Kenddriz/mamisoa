@@ -8,8 +8,8 @@
     :model-value="modelValue"
     :disable="!units.length"
     v-model.number="modelValue"
-    lazy-rules
-    :rules="[ val => val > 0 || 'Entrer nombre strictement positif']"
+    :lazy-rules="true"
+    :rules="[ val => val >= 0 || 'Entrer nombre strictement positif']"
     input-class="text-blue-grey-14"
   >
     <template v-slot:prepend>
@@ -29,7 +29,7 @@
     </template>
     <template v-slot:append>
       <label v-if="!units.length" class="text-caption text-danger">
-        Aucune unité disponible
+        Aucune unité
       </label>
       <UnitConverter
         v-else

@@ -3,16 +3,12 @@
     class="q-gutter-md text-blue-grey-14"
     @submit="$emit('save', { medicineId: medicine.value, quantity })"
   >
-    <div class="text-subtitle1 row justify-between">
-      <slot name="title"></slot>
-    </div>
-    <ArticleSelect
+    <MedicineSelect
       :model-value="medicine"
       @update="medicine = $event"
-      outlined
       label="Nom du médicament*"
       lazy-rules
-      :rules="[ val => val.value > 0 || 'Entrer le nom du médicament à commander']"
+      :rules="[ val => val.value > 0 || 'Médicament à commander*']"
     />
     <PackagingInput
       :units="medicine.packaging.units"
@@ -36,28 +32,28 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import {defineComponent, PropType, reactive, ref} from 'vue';
 import PackagingInput from '../packaging/PackagingInput.vue';
-import ArticleSelect from '../article/ArticleSelect.vue';
-import { FindOneArticleOption } from '../../graphql/article/article.service';
-import { CommandLine, Medicine } from '../../graphql/types';
-import { cloneDeep } from '../../graphql/utils/utils';
+import { CommandLine, Medicine } from 'src/graphql/types';
+import {cloneDeep} from 'src/graphql/utils/utils';
+import MedicineSelect from 'components/medicine/MedicineSelect.vue';
+import {MedOption} from 'src/graphql/medicine/paginate.medicines';
 
 export default defineComponent({
   name: 'CommandLineForm',
-  components: { PackagingInput, ArticleSelect },
+  components: { PackagingInput, MedicineSelect },
   props: {
     commandLine: Object as PropType<CommandLine>
   },
   emits: ['save'],
   setup(props) {
-    const medicine = ref<FindOneArticleOption>(new FindOneArticleOption());
+    const medicine = reactive<MedOption>(new MedOption());
     const quantity = ref<number>(1);
     if(props?.commandLine) {
       const med: Medicine = cloneDeep(props.commandLine.medicine);
-      Object.assign(medicine.value, {
+      Object.assign(medicine, {
         value: med.id,
-        label: `${med.article.commercialName} ${med.dosage.label}, ${med.form.label}`,
+        label: `${med.label}`,
         packaging: med.packaging
       })
       quantity.value = Number(props.commandLine.quantity);

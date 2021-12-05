@@ -1,18 +1,15 @@
 import {
-  MutationCreateMedicineArgs,
   MutationSoftRemoveMedicineArgs,
   MutationUpdateMedicineArgs,
-  MedicineFormInput,
+
   QueryMostConsumedMedicinesArgs,
   MutationRemoveMedicineArgs,
   MutationRestoreMedicineArgs,
   PaginationInput,
-  QueryPaginateDeletedMedicinesArgs
+  QueryPaginateDeletedMedicinesArgs, CreateMedicineInput
 } from '../types';
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
-  CREATE_MEDICINE,
-  CreateMedicineData,
   SOFT_REMOVE_MEDICINE,
   SoftRemoveMedicineData,
   UPDATE_MEDICINE,
@@ -30,25 +27,8 @@ import { removeDialog } from '../utils/utils';
 import { reactive, ref } from 'vue';
 import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { Loading } from 'quasar';
-import { notify } from '../../shared/notification';
+import { notify } from 'src/shared/notification';
 
-export const useCreateMedicine = () => {
-  const { mutate, onDone } = useMutation<
-    CreateMedicineData,
-    MutationCreateMedicineArgs
-    >(CREATE_MEDICINE);
-  onDone(() => {
-    Loading.hide();
-    notify('Création avec succès !');
-  })
-  function createMedicine(articleId: number, form: MedicineFormInput) {
-    Loading.show({
-      message: 'Création ...'
-    });
-    void mutate({ input: { articleId, form } });
-  }
-  return { createMedicine }
-}
 export const useUpdateMedicine = () => {
   const { mutate, onDone } = useMutation<
     UpdateMedicineData,
@@ -58,7 +38,7 @@ export const useUpdateMedicine = () => {
     Loading.hide();
     notify('Mise à jour avec succès !');
   })
-  function updateMedicine(id: number, form: MedicineFormInput) {
+  function updateMedicine(id: number, form: CreateMedicineInput) {
     Loading.show({ message: 'Mise à jour ...'});
     void mutate({ input: {id, form} });
   }
@@ -112,7 +92,7 @@ export const useSoftRemoveMedicine = () => {
               cache.modify({
                 fields: {
                   paginateDeletedMedicines(existing: any, {toReference}) {
-                    return addPaginationCache(data.softRemoveMedicine.medicine, existing, toReference);
+                    return addPaginationCache(data.softRemoveMedicine, existing, toReference);
                   }
                 }
               })

@@ -2,8 +2,7 @@ import { gql } from '@apollo/client/core';
 import { Command, Invoice, InvoicePagination } from '../types';
 import { PAYMENT_PARAMS } from '../payment/payment.sdl';
 import { PAGINATION_META } from '../utils/pagination';
-import { MEDICINE_PARAMS } from '../medicine/medicine.sdl';
-import { ARTICLE_PARAMS } from '../article/article.sdl';
+import { MEDICINE_FIELDS } from '../medicine/medicine.sdl';
 import { COMMAND_LINE } from '../command-line/commandLine.sdl';
 import { BATCH_FIELDS } from '../batch/batch.sdl';
 
@@ -52,31 +51,31 @@ const OUT_MVT_FIELDS = `
     ${STOCK_MVT_FIELDS}
   }
 `;
-export const STOCK_MVT_DTO = (out = false) => `
+export const STOCK_MVT_DTO = (out = false, withBatches = false) => `
   stockMovements {
     ${STOCK_MVT_FIELDS}
     ${out ? OUT_MVT_FIELDS : ''}
     batch {
       ${BATCH_FIELDS}
       medicine {
-        ${MEDICINE_PARAMS}
-        article{${ARTICLE_PARAMS}}
+        ${MEDICINE_FIELDS}
+        ${withBatches ? `batches{${BATCH_FIELDS}}` : ''}
       }
     }
   }
 `;
 
-export const INVOICE_FIELDS = (out = false) =>`
+export const INVOICE_FIELDS = (out = false, withBatches = false) =>`
     ${INVOICE_PARAMS}
     payment{${PAYMENT_PARAMS}}
-    ${STOCK_MVT_DTO(out)}
+    ${STOCK_MVT_DTO(out, withBatches)}
     createdAt
 `;
 export const CREATE_INVOICE = gql`
   mutation CreateInvoice($input: CreateInvoiceInput!){
     createInvoice(input: $input) {
       id
-      invoice {${INVOICE_FIELDS()}}
+      invoice {${INVOICE_FIELDS(false, true)}}
     }
   }
 `;

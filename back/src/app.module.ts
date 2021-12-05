@@ -10,8 +10,6 @@ import { ProviderModule } from './provider/provider.module';
 import { CommandModule } from './command/command.module';
 import { CommandLineModule } from './command-line/command-line.module';
 import { MedicineModule } from './medicine/medicine.module';
-import { ArticleModule } from './article/article.module';
-import { DosageModule } from './dosage/dosage.module';
 import { PackagingModule } from './packaging/packaging.module';
 import { StockMovementModule } from './stock-movement/stock-movement.module';
 import { InvoiceModule } from './invoice/invoice.module';
@@ -22,7 +20,6 @@ import { SaleModule } from './sale/sale.module';
 import { PatientModule } from './patient/patient.module';
 import { AuthModule } from './auth/auth.module';
 import { PrescriptionModule } from './prescription/prescription.module';
-import { FormModule } from './form/form.module';
 import { AppResolver } from './app.resolver';
 
 @Module({
@@ -43,8 +40,6 @@ import { AppResolver } from './app.resolver';
     CommandModule,
     CommandLineModule,
     MedicineModule,
-    ArticleModule,
-    DosageModule,
     PackagingModule,
     StockMovementModule,
     InvoiceModule,
@@ -55,7 +50,6 @@ import { AppResolver } from './app.resolver';
     PatientModule,
     AuthModule,
     PrescriptionModule,
-    FormModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

@@ -3,8 +3,8 @@
     <q-bar class="bg-teal-14 text-white">
       <q-icon name="delete" color="warning" />
       <span style="font-size: 12px">
-          {{article.commercialName}} {{medicine.form.label}}, {{medicine.dosage.label}}
-        </span>
+        {{medicine.label}}
+      </span>
       <q-space />
       <q-btn dense flat icon="close" v-close-popup />
     </q-bar>
@@ -49,20 +49,16 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
-import { Article, Medicine } from '../../graphql/types';
 import Batch from '../batch/Batch.vue';
-import { useSoftRemoveMedicine } from '../../graphql/medicine/medicine.service';
+import { useSoftRemoveMedicine } from 'src/graphql/medicine/medicine.service';
 import ScrollArea from '../shared/ScrollArea.vue';
+import {Medicine} from 'src/graphql/types';
 export default defineComponent({
   name: 'SoftRemoveMedicine',
   components: { Batch, ScrollArea },
   props: {
     medicine: {
       type: Object as PropType<Medicine>,
-      required: true
-    },
-    article: {
-      type: Object as PropType<Article>,
       required: true
     }
   },

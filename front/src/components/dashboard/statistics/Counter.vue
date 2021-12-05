@@ -1,24 +1,6 @@
 <template>
   <div class="flex flex-center q-gutter-md q-pt-sm">
     <Alert
-      label="Articles"
-      :value="counts.countArticles"
-      icon="pages"
-      :loading="loading"
-    />
-    <Alert
-      label="Formes"
-      :value="counts.countForms"
-      icon="merge_type"
-      :loading="loading"
-    />
-    <Alert
-      label="Dosages"
-      :value="counts.countDosages"
-      icon="straighten"
-      :loading="loading"
-    />
-    <Alert
       label="Médicaments"
       :value="counts.countMedicines"
       icon="healing"

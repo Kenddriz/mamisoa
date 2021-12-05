@@ -2,7 +2,7 @@
   <q-card
     class="text-blue-grey-14"
     :style="currentPos"
-    v-bind:class="{resizable: 'resizable'}"
+    :class="resizable ? 'resizable' : ''"
   >
     <q-bar v-touch-pan.prevent.mouse="move" class="bg-teal-14">
       <div class="text-white">

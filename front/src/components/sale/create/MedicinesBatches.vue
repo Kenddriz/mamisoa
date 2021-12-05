@@ -1,8 +1,7 @@
 <template>
-  <template v-for="(med, iMed) in article.medicines" :key="iMed">
+  <template v-for="(med, iMed) in medicines" :key="iMed">
     <Divider align="center" class="text-blue-grey-14">
-      {{article.commercialName}}
-      {{med.dosage.label}}, {{med.form.label}}
+      {{med.label}}
       <q-btn dense color="brown" flat icon="read_more">
         <MoreInfo :medicine="med" />
       </q-btn>
@@ -65,7 +64,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Article } from '../../../graphql/types';
+import { Medicine } from '../../../graphql/types';
 import IndividualSale from './IndividualSale.vue';
 import { useQuasar } from 'quasar';
 import Divider from '../../shared/Divider.vue';
@@ -78,8 +77,8 @@ export default defineComponent({
   name: 'ArticleMedicinesBatches',
   components: {Divider, SubdivideList, MoreInfo},
   props: {
-    article: {
-      type: Object as PropType<Article>,
+    medicines: {
+      type: Object as PropType<Medicine[]>,
       required: true
     }
   },
@@ -87,15 +86,11 @@ export default defineComponent({
   setup(props, { emit }) {
     const { dialog } = useQuasar();
     function getBatch(iMed: number, iBatch: number) {
-      const { medicines, ...article } = props.article;
-      if(medicines) {
-        const { batches, ...medicine } = medicines[iMed];
-        return {
-          ...batches[iBatch],
-          medicine: { ...medicine, article }
-        };
-      }
-      return undefined;
+      const { batches, ...medicine } = props.medicines[iMed];
+      return {
+        ...batches[iBatch],
+        medicine
+      };
     }
     return {
       individualSale: (iMed: number, iBatch: number) => {
