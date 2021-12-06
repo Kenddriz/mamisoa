@@ -142,11 +142,12 @@
         <q-card-section>
           <q-input
             outlined
-            label="Entrer le nom de l'article"
+            label="Entrer la désignation"
             :model-value="input.keyword"
             v-model="input.keyword"
             dense
             hide-bottom-space
+            @update:model-value="submitSearch()"
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -157,16 +158,16 @@
           </q-input>
         </q-card-section>
         <ScrollArea style="height: calc(86vh - 100px)" class="q-pa-sm">
-          <ArticleMedicinesBatches
-            v-if="medicines"
-            :medicines="medicines"
+          <MedicinesBatches
+            v-if="medicines.meta.totalItems > 0"
+            :medicines="medicines.items"
             @add-shop="addShop"
             @individual-sale="handleIndividualSale"
           />
           <NoData
             :sizes="[100, 150]"
             :loading="pcLoading"
-            :total-items="medicines?.items.length||0"
+            :total-items="medicines.meta.totalItems"
           />
         </ScrollArea>
       </q-card>
@@ -183,7 +184,7 @@ import SaleLine from './create/SaleLine.vue';
 import { Batch, SaleLineInput } from 'src/graphql/types';
 import { useQuasar } from 'quasar';
 import { getMedicineName, movable, saleLineCost } from 'src/graphql/utils/utils';
-import ArticleMedicinesBatches from './create/MedicinesBatches.vue';
+import MedicinesBatches from './create/MedicinesBatches.vue';
 import ScrollArea from '../shared/ScrollArea.vue';
 import NoData from '../shared/NoData.vue';
 import {usePaginateMedicines} from 'src/graphql/medicine/paginate.medicines';
@@ -195,7 +196,7 @@ export default defineComponent({
     SubdivideList,
     DiscountCalculator,
     CommonSaleHeader,
-    ArticleMedicinesBatches,
+    MedicinesBatches,
     ScrollArea,
     NoData
   },

@@ -16,12 +16,14 @@ import { UpdateAssuredLineInput } from '../invoice/types/invoice.input';
 import { MedicineService } from '../medicine/medicine.service';
 import {
   CancelSaleLineOutput,
+  MonthlyMovementsOutput,
   StockMovementPagination,
-} from './dto/stock-movement.output';
+} from './types/stock-movement.output';
 import {
   CancelSaleLinesInput,
+  MonthlyMovementsInput,
   PaginateStockMovementInput,
-} from './dto/stock-movement.input';
+} from './types/stock-movement.input';
 import { Sale } from '../sale/sale.entity';
 import { SaleService } from '../sale/sale.service';
 import { AddSaleLineInput, UpdateSaleLineInput } from '../sale/dto/sale.input';
@@ -144,6 +146,37 @@ export class StockMovementResolver {
     @Args('input') input: PaginateStockMovementInput,
   ): Promise<StockMovementPagination> {
     return this.stmService.paginate(input);
+  }
+  @Query(() => [MonthlyMovementsOutput])
+  async monthlyMovements(@Args('input') input: MonthlyMovementsInput) {
+    input.month = '12-2021';
+    const outputs: MonthlyMovementsOutput[] = input.medicineIds.map(
+      (medicineId) => ({
+        medicineId,
+        in: 0,
+        out: 0,
+        stock: 0,
+      }),
+    );
+    const batches = await this.batchService.findByMedicines(input.medicineIds);
+    const movements = await this.stmService.monthlyMovements(
+      input.month,
+      batches.map((b) => b.id),
+    );
+    input.medicineIds.forEach((medicineId, indexMed) => {
+      batches.forEach((batch) => {
+        if (batch.medicineId === medicineId) {
+          movements.forEach((mvt) => {
+            if (mvt.batchId === batch.id) {
+              outputs[indexMed].stock = mvt.stock;
+              outputs[indexMed].in += mvt.invoiceId !== null ? mvt.quantity : 0;
+              outputs[indexMed].out += mvt.saleId !== null ? mvt.quantity : 0;
+            }
+          });
+        }
+      });
+    });
+    return outputs;
   }
   @ResolveField(() => Invoice, { nullable: true })
   async invoice(@Root() stockMovement: StockMovement): Promise<Invoice> {

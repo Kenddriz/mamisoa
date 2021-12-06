@@ -6,7 +6,7 @@ import {
   PartialType,
   Int,
 } from '@nestjs/graphql';
-import { StockMovementFormInput } from '../../stock-movement/dto/stock-movement.input';
+import { StockMovementFormInput } from '../../stock-movement/types/stock-movement.input';
 import { BatchFormInput } from '../../batch/dto/batch.input';
 import { PaginationInput } from '../../shared/shared.input';
 

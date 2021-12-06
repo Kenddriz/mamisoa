@@ -27,6 +27,12 @@ export class BatchService {
       .andWhere('b.expirationDate >= CURRENT_DATE')
       .getMany();
   }
+  async findByMedicines(medicineIds: number[]): Promise<Batch[]> {
+    return this.repository
+      .createQueryBuilder('b')
+      .where('b.medicineId IN (:...medicineIds)', { medicineIds })
+      .getMany();
+  }
   async findExisting(
     medicineId: number,
     expirationDate: string,

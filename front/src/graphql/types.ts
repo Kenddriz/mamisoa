@@ -271,6 +271,19 @@ export type MethodInput = {
   label: Scalars['String'];
 };
 
+export type MonthlyMovementsInput = {
+  medicineIds: Array<Scalars['Int']>;
+  month: Scalars['String'];
+};
+
+export type MonthlyMovementsOutput = {
+  __typename?: 'MonthlyMovementsOutput';
+  medicineId: Scalars['Int'];
+  in: Scalars['Int'];
+  out: Scalars['Int'];
+  stock: Scalars['Int'];
+};
+
 export type MostConsumedMedicineOutput = {
   __typename?: 'MostConsumedMedicineOutput';
   medicine: Medicine;
@@ -769,6 +782,7 @@ export type Query = {
   packaging: Array<Packaging>;
   deletedPackaging: Array<Packaging>;
   paginateStockMovement: StockMovementPagination;
+  monthlyMovements: Array<MonthlyMovementsOutput>;
   paginateInvoices: InvoicePagination;
   countUnpaidInvoices: Scalars['Int'];
   paginateDeletedInvoices: InvoicePagination;
@@ -838,6 +852,11 @@ export type QueryPaginateMedicinesArgs = {
 
 export type QueryPaginateStockMovementArgs = {
   input: PaginateStockMovementInput;
+};
+
+
+export type QueryMonthlyMovementsArgs = {
+  input: MonthlyMovementsInput;
 };
 
 

@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { StockMovementFormInput } from '../../stock-movement/dto/stock-movement.input';
+import { StockMovementFormInput } from '../../stock-movement/types/stock-movement.input';
 import { PrescriptionInput } from '../../prescription/dto/prescription.input';
 
 @InputType()

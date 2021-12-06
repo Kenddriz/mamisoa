@@ -24,6 +24,7 @@
           animated
           transition-prev="slide-down"
           transition-next="slide-up"
+          keep-alive
         >
           <q-tab-panel name="command" class="q-pa-xs">
             <CommandMedicine />

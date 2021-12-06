@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Meta } from '../../shared/shared.dto';
 import { StockMovement } from '../stock-movement.entity';
 import { Sale } from '../../sale/sale.entity';
@@ -19,4 +19,15 @@ export class CancelSaleLineOutput {
   sale: Sale;
   @Field(() => [Batch])
   batches: Batch[];
+}
+@ObjectType()
+export class MonthlyMovementsOutput {
+  @Field(() => Int)
+  medicineId: number;
+  @Field(() => Int)
+  in: number;
+  @Field(() => Int)
+  out: number;
+  @Field(() => Int)
+  stock: number;
 }

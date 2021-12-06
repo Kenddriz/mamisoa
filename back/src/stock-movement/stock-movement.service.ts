@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StockMovement } from './stock-movement.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { PaginateStockMovementInput } from './dto/stock-movement.input';
+import { Brackets, DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { PaginateStockMovementInput } from './types/stock-movement.input';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
@@ -117,6 +117,27 @@ export class StockMovementService {
       .innerJoin(`(${subQuery.getQuery()})`, 'joiner', 'joiner.id = stm.id')
       .andWhere('joiner.total - stm.quantity < :q0', { q0 })
       .orderBy('stm.id', 'ASC')
+      .getMany();
+  }
+  /**monthly movements**/
+  async monthlyMovements(month: string, batchIds: number[]) {
+    return this.repository
+      .createQueryBuilder('mvt')
+      .leftJoin('invoices', 'invoice', 'invoice.id = mvt."invoiceId"')
+      .leftJoin('sales', 'sale', 'sale.id = mvt."saleId"')
+      .where(`mvt."batchId" IN (:...batchIds)`, {
+        batchIds,
+      })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(`TO_CHAR(invoice."createdAt"::DATE, 'mm-yyyy') = :month`, {
+            month,
+          }).orWhere(`TO_CHAR(sale."createdAt"::DATE, 'mm-yyyy') = :month`, {
+            month,
+          });
+        }),
+      )
+      .orderBy('mvt.id', 'ASC')
       .getMany();
   }
 }

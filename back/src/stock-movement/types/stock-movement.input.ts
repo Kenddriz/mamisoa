@@ -31,3 +31,11 @@ export class CancelSaleLinesInput {
   @Field(() => [Int])
   saleLineIds: number[];
 }
+
+@InputType()
+export class MonthlyMovementsInput {
+  @Field(() => [Int])
+  medicineIds: number[];
+  @Field(() => String)
+  month: string;
+}

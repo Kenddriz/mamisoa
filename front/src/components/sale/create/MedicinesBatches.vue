@@ -74,7 +74,7 @@ import { leftDays, subdivideToUnits } from '../../../graphql/utils/utils';
 import MoreInfo from '../../medicine/MoreInfo.vue';
 
 export default defineComponent({
-  name: 'ArticleMedicinesBatches',
+  name: 'MedicinesBatches',
   components: {Divider, SubdivideList, MoreInfo},
   props: {
     medicines: {

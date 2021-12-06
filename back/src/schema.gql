@@ -205,6 +205,13 @@ type CancelSaleLineOutput {
   batches: [Batch!]!
 }
 
+type MonthlyMovementsOutput {
+  medicineId: Int!
+  in: Int!
+  out: Int!
+  stock: Int!
+}
+
 type InvoicePagination {
   items: [Invoice!]!
   meta: Meta!
@@ -266,6 +273,7 @@ type Query {
   packaging: [Packaging!]!
   deletedPackaging: [Packaging!]!
   paginateStockMovement(input: PaginateStockMovementInput!): StockMovementPagination!
+  monthlyMovements(input: MonthlyMovementsInput!): [MonthlyMovementsOutput!]!
   paginateInvoices(input: PaginateInvoiceInput!): InvoicePagination!
   countUnpaidInvoices: Int!
   paginateDeletedInvoices(input: PaginationInput!): InvoicePagination!
@@ -305,6 +313,11 @@ input PaginateStockMovementInput {
   batchId: Float
   page: Float!
   limit: Float!
+}
+
+input MonthlyMovementsInput {
+  medicineIds: [Int!]!
+  month: String!
 }
 
 input PaginateInvoiceInput {
