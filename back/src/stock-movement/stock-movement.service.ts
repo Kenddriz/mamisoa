@@ -121,6 +121,7 @@ export class StockMovementService {
   }
   /**monthly movements**/
   async monthlyMovements(month: string, batchIds: number[]) {
+    if (batchIds.length === 0) return [];
     return this.repository
       .createQueryBuilder('mvt')
       .leftJoin('invoices', 'invoice', 'invoice.id = mvt."invoiceId"')

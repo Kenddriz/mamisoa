@@ -28,6 +28,7 @@ export class BatchService {
       .getMany();
   }
   async findByMedicines(medicineIds: number[]): Promise<Batch[]> {
+    if (medicineIds.length === 0) return [];
     return this.repository
       .createQueryBuilder('b')
       .where('b.medicineId IN (:...medicineIds)', { medicineIds })

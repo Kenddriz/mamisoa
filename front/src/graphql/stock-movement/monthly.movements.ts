@@ -2,6 +2,7 @@ import {MonthlyMovementsInput, MonthlyMovementsOutput, QueryMonthlyMovementsArgs
 import {gql} from '@apollo/client/core';
 import {reactive} from 'vue';
 import {useLazyQuery, useResult} from '@vue/apollo-composable';
+import {cloneDeep} from 'src/graphql/utils/utils';
 
 type MonthlyMovementsData = {
   monthlyMovements: MonthlyMovementsOutput[];
@@ -30,7 +31,7 @@ export const useMonthlyMovements = () => {
   const { loading: monthlyMvtLoading, result, load  } = useLazyQuery<
     MonthlyMovementsData,
     QueryMonthlyMovementsArgs
-    >(MONTHLY_MOVEMENTS, { input: { ... monthlyMvtInput } });
+    >(MONTHLY_MOVEMENTS, { input: cloneDeep(monthlyMvtInput) });
   const movements = useResult<
     MonthlyMovementsData|undefined,
     MonthlyMovementsOutput[],
@@ -39,7 +40,7 @@ export const useMonthlyMovements = () => {
   function submitMonthlyMvt(medicineIds: number[]) {
     monthlyMvtInput.medicineIds = medicineIds;
     if(medicineIds.length > 0)
-      void load(MONTHLY_MOVEMENTS, { input: monthlyMvtInput });
+      void load(MONTHLY_MOVEMENTS, { input: cloneDeep(monthlyMvtInput) });
   }
   function findMovement(medicineId: number): MonthlyMovementsOutput {
     const mvt = movements.value.find(m => m.medicineId === medicineId);

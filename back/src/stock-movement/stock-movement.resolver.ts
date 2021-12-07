@@ -149,7 +149,6 @@ export class StockMovementResolver {
   }
   @Query(() => [MonthlyMovementsOutput])
   async monthlyMovements(@Args('input') input: MonthlyMovementsInput) {
-    input.month = '12-2021';
     const outputs: MonthlyMovementsOutput[] = input.medicineIds.map(
       (medicineId) => ({
         medicineId,
@@ -163,6 +162,7 @@ export class StockMovementResolver {
       input.month,
       batches.map((b) => b.id),
     );
+    if (movements.length === 0) return outputs;
     input.medicineIds.forEach((medicineId, indexMed) => {
       batches.forEach((batch) => {
         if (batch.medicineId === medicineId) {

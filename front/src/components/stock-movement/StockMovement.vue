@@ -6,6 +6,7 @@
     :rows="medicines.items"
     :columns="columns"
     row-key="id"
+    :loading="pcLoading||monthlyMvtLoading"
   >
 
     <template v-slot:header="props">
@@ -43,6 +44,7 @@
         class="q-mr-md"
         mask="##-####"
         spellcheck="false"
+        @keyup.enter="refreshMovement()"
       />
       <q-input
         :model-value="input.keyword"
@@ -73,13 +75,20 @@
             :icon="props.expand ? 'remove' : 'add'"
           />
         </q-td>
-        <q-td
-          v-for="col in props.cols"
-          :key="col.name"
-          :props="props"
-        >
-          {{ col.value }}
+        <q-td key="label">
+          {{props.row.label}}
         </q-td>
+        <template v-if="mvt = findMovement(props.row.id)">
+          <q-td key="in">
+            {{mvt.in}}
+          </q-td>
+          <q-td key="out">
+            {{mvt.out}}
+          </q-td>
+          <q-td key="stock">
+            {{mvt.stock}}
+          </q-td>
+        </template>
       </q-tr>
       <q-tr no-hover v-show="props.expand" :props="props">
         <q-td colspan="100%">
@@ -99,9 +108,9 @@ import {useMonthlyMovements} from 'src/graphql/stock-movement/monthly.movements'
 import {MedicinePaginationOutput} from 'src/graphql/types';
 const columns = [
   { name: 'label', label: 'Désignation', align: 'left', field: 'label', sortable: true},
-  { name: 'in', align: 'center', label: 'Entrée', sortable: true },
-  { name: 'out', align: 'center', label: 'Sortie', sortable: true },
-  { name: 'stock', align: 'center', label: 'Stock', sortable: true },
+  { name: 'in', align: 'left', label: 'Entrée', sortable: true },
+  { name: 'out', align: 'left', label: 'Sortie', sortable: true },
+  { name: 'stock', align: 'left', label: 'Stock', sortable: true },
 ]
 export default defineComponent({
   name: 'StockMovement',
@@ -117,6 +126,11 @@ export default defineComponent({
   watch: {
     medicines: function (med: MedicinePaginationOutput) {
       this.submitMonthlyMvt(med.items.map(m => m.id));
+    }
+  },
+  methods: {
+    refreshMovement() {
+      this.submitMonthlyMvt(this.medicines.items.map(m => m.id));
     }
   }
 })
